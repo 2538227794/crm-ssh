@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--配置定时任务-->
+    <!--配置Job-->
+    <bean id="backupMySQLJob" class="com.yaorange.Controller.job.BackupMySQLJob"/>
+    <bean id="customerFreedJob" class="com.yaorange.Controller.job.CustomerFreedJob"/>
+
+    <!--配置JobDetail-->
+    <bean id="backupMySQLJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!--指定目标对象（调用的job类对象）-->
+        <property name="targetObject" ref="backupMySQLJob"/>
+        <!--指定目标方法（调用的方法）-->
+        <property name="targetMethod" value="backup"/>
+    </bean>
+    <bean id="customerFreedJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!--指定目标对象（调用的job类对象）-->
+        <property name="targetObject" ref="customerFreedJob"/>
+        <!--指定目标方法（调用的方法）-->
+        <property name="targetMethod" value="freed"/>
+    </bean>
+
+    <!--配置trigger-->
+    <bean id="customerFreedJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!--指定当前trigger到达指定时间后执行的jobDetail-->
+        <property name="jobDetail" ref="customerFreedJobDetail"/>
+        <!--通过使用cron表达式指定任务时间-->
+        <property name="cronExpression" value="0 0 0 * * ? "/>
+    </bean>
+    <bean id="backupMySQLJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!--指定当前trigger到达指定时间后执行的jobDetail-->
+        <property name="jobDetail" ref="backupMySQLJobDetail"/>
+        <!--通过使用cron表达式指定任务时间-->
+        <property name="cronExpression" value="0 0 0 * * ? "/>
+    </bean>
+
+    <!--配置Scheduler-->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <!--配置需要任务调度的Trigger-->
+        <property name="triggers">
+            <list>
+                <ref bean="customerFreedJobTrigger"/>
+                <ref bean="backupMySQLJobTrigger"/>
+            </list>
+        </property>
+    </bean>
+</beans>

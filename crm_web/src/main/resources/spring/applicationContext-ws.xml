@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jawxs="http://cxf.apache.org/jaxws"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+    <!--配置服务发布-->
+    <jawxs:server address="/wstest" serviceClass="com.yaorange.webservice.WSInterface">
+        <jawxs:serviceBean>
+            <ref bean="wsInterface"/>
+        </jawxs:serviceBean>
+    </jawxs:server>
+
+    <!--配置webServic服务实现类-->
+    <bean id="wsInterface" class="com.yaorange.webservice.impl.WSInterfaceImpl"/>
+</beans>
